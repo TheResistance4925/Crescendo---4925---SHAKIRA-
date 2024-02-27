@@ -1,8 +1,9 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.GenericHID;
-import edu.wpi.first.wpilibj.Joystick;
+//import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
@@ -18,14 +19,16 @@ import frc.robot.subsystems.*;
  * periodic methods (other than the scheduler calls). Instead, the structure of the robot (including
  * subsystems, commands, and button mappings) should be declared here.
  */
+
 public class RobotContainer {
 
     //private static RobotContainer m_robotContainer = new RobotContainer();
     //subsystems
-    public final ArmSubsystem m_armSubsystem = new ArmSubsystem( 25,  27,  24,  26, 24, 26);
+  
     public final ClimberSubsystem m_climberSubsystem = new ClimberSubsystem();
-    public final IntakeSubsystem m_intakeSubsystem = new IntakeSubsystem();
-    public final LEDsSubsystem m_ledsSubsystem = new LEDsSubsystem();
+    public final MotorTestSubsystem m_motorTestSubsystem = new MotorTestSubsystem();
+    public final ShoulderSubsystem m_shoulderSubsystem = new ShoulderSubsystem();
+    public final WristSubsystem m_wristSubsystem = new WristSubsystem();
     /* Controllers */
     private final XboxController driver = new XboxController(0);
     private final XboxController driver2 = new XboxController(1);
@@ -39,9 +42,20 @@ public class RobotContainer {
     private final JoystickButton zeroGyro = new JoystickButton(driver, XboxController.Button.kY.value);
     private final JoystickButton robotCentric = new JoystickButton(driver, XboxController.Button.kLeftBumper.value);
 
+    /* MOTOR TEST CONTROLS 
+
+    private final JoystickButton shoulderUp = new JoystickButton(driver2, XboxController.Button.kA.value);
+    private final JoystickButton shoulderDown = new JoystickButton(driver2, XboxController.Button.kA.value);
+    private final JoystickButton wristUp = new JoystickButton(driver2, XboxController.Button.kA.value);
+    private final JoystickButton wristDown = new JoystickButton(driver2, XboxController.Button.kA.value);
+    private final JoystickButton intakePositive = new JoystickButton(driver2, XboxController.Button.kA.value);
+    private final JoystickButton intakeNegative = new JoystickButton(driver2, XboxController.Button.kA.value);
+    
+    */
+
+
     /* Subsystems */
     private final Swerve s_Swerve = new Swerve();
-
     /*Arm Control */
     // private final JoystickButton Pose0 = new JoystickButton(driver, XboxController.Button.kA.value);
     // private final JoystickButton Pose45 = new JoystickButton(driver, XboxController.Button.kX.value);
@@ -82,34 +96,61 @@ public class RobotContainer {
 
         zeroGyro.onTrue(new InstantCommand(() -> s_Swerve.zeroHeading()));
 
-        // Arm Control
 
-        Trigger xboxButton1 = new JoystickButton(driver, XboxController.Button.kA.value);
-    xboxButton1.onTrue(new InstantCommand(() -> {
-        System.out.println("Pose0 Pressed");
-        m_armSubsystem.setArmPosition( 0, 0);
+
+// ////////////////////////
+// ///MOTOR TEST COMMANDS///
+// /////////////////////////
+
+
+///SHOULDER///
+
+   
+    Trigger xboxButton11 = new JoystickButton(driver2, XboxController.Button.kB.value);
+    xboxButton11.whileTrue(new InstantCommand(() -> {
+        System.out.print("SHOULDER DOWN?");
+        m_shoulderSubsystem.testShoulder( -0.5, 0.5);
     }));
 
-    Trigger xboxButton2 = new JoystickButton(driver, XboxController.Button.kB.value);
-    xboxButton2.onTrue(new InstantCommand(() -> {
-        System.out.println("Pose45 Pressed");
-        m_armSubsystem.setArmPosition(45, 0);
+    Trigger xboxButton1 = new JoystickButton(driver2, XboxController.Button.kA.value);
+    xboxButton1.whileTrue(new InstantCommand(() -> {
+        System.out.print("SHOULDER UP?");
+        m_shoulderSubsystem.testShoulder( 0.5, 0.5);
     }));
 
-        // Toaster (INTAKE+ SHOOTER) Control
-  Trigger xboxButton21 = new JoystickButton(driver2, XboxController.Button.kA.value);
-    xboxButton21.onTrue(new InstantCommand(() -> {
-        System.out.println("Intake");
-        m_intakeSubsystem.driveMotors(0,0);
+///WRIST///
+
+    Trigger xboxButton2 = new JoystickButton(driver2, XboxController.Button.kX.value);
+    xboxButton2.whileTrue(new InstantCommand(() -> {
+        System.out.print("WRIST UP?");
+        m_wristSubsystem.testWrist( 0.5, 0.5);
     }));
 
-    Trigger xboxButton22 = new JoystickButton(driver2, XboxController.Button.kB.value);
+    Trigger xboxButton22 = new JoystickButton(driver2, XboxController.Button.kY.value);
     xboxButton22.whileTrue(new InstantCommand(() -> {
-        System.out.println("Shooting");
-        m_intakeSubsystem.driveMotors(1,1);
+        System.out.print("WRIST DOWN?");
+        m_wristSubsystem.testWrist( -0.5, 0.5);
+    }));
+    
+///INTAKE///
+
+    Trigger xboxButton3 = new JoystickButton(driver2, XboxController.Button.kLeftBumper.value);
+    xboxButton3.whileTrue(new InstantCommand(() -> {
+        System.out.print("INTAKING INITIATED");
+        m_motorTestSubsystem.testIntake( -0.5, 0.6, 2);
+    }));
+    
+    Trigger xboxButton33 = new JoystickButton(driver2, XboxController.Button.kRightBumper.value);
+    xboxButton33.whileTrue(new InstantCommand(() -> {
+        System.out.print("INTAKE REGURGITATING");
+        m_motorTestSubsystem.testIntake( 0.5, -0.6, 2);
     }));
 
+// ///////////////////////////////
+// /// MOTOR TEST COMMANDS DONE///
+// ///////////////////////////////
 
+    
     }
 
     /**
