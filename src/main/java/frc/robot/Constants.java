@@ -4,11 +4,13 @@ import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
 
+import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
+import frc.lib.PIDGains;
 import frc.lib.util.COTSTalonFXSwerveConstants;
 import frc.lib.util.SwerveModuleConstants;
 
@@ -139,9 +141,78 @@ public final class Constants {
         public static final double kPYController = 1;
         public static final double kPThetaController = 1;
     
+
+        
         /* Constraint for the motion profilied robot angle controller */
         public static final TrapezoidProfile.Constraints kThetaControllerConstraints =
             new TrapezoidProfile.Constraints(
                 kMaxAngularSpeedRadiansPerSecond, kMaxAngularSpeedRadiansPerSecondSquared);
     }
+
+ public static final class Arm {
+    public static final int kArmCanId = 24;
+    public static final int kWristCanId = 26;
+
+    public static final boolean kArmInverted = true;
+    public static final int kCurrentLimit = 40;
+
+    // public static final double kSoftLimitReverse = -1.15;
+    // public static final double kSoftLimitForward = 0.0;
+
+    public static final double kArmGearRatio = (1.0 / 240);
+    // IMPORTANT CHANGE -- DIFFERENT RATIO FOR 2 JOINTS
+    public static final double kWristGearRatio = (1.0 / 60);
+
+
+
+    public static final double kPositionFactor =
+        kArmGearRatio
+            * 2.0
+            * Math.PI; // multiply SM value by this number and get arm position in radians
+    public static final double kVelocityFactor = kArmGearRatio * 2.0 * Math.PI / 60.0;
+    public static final double kArmFreeSpeed = 5676.0 * kVelocityFactor;
+    public static final double kArmZeroCosineOffset =
+        1.342; // radians to add to converted arm position to get real-world arm position (starts at
+    // ~76.9deg angle)
+    public static final ArmFeedforward kArmFeedforward =
+        new ArmFeedforward(0.0, 3.0, 12.0 / kArmFreeSpeed, 0.0);
+    public static final PIDGains kArmPositionGains = new PIDGains(2.5, 0.0, 0.0);
+    public static final TrapezoidProfile.Constraints kArmMotionConstraint =
+        new TrapezoidProfile.Constraints(1.0, 2.0);
+
+
+
+
+
+        public static final double kWristPositionFactor =
+        kArmGearRatio
+            * 2.0
+            * Math.PI; // multiply SM value by this number and get arm position in radians
+    public static final double kWristVelocityFactor = kWristGearRatio * 2.0 * Math.PI / 60.0;
+    public static final double kWristFreeSpeed = 5676.0 * kVelocityFactor;
+    public static final double kWristZeroCosineOffset =
+        1.342; // radians to add to converted arm position to get real-world arm position (starts at
+    // ~76.9deg angle)
+    public static final ArmFeedforward kWristFeedforward =
+        new ArmFeedforward(0.0, 3.0, 12.0 / kWristFreeSpeed, 0.0);
+    public static final PIDGains kWristPositionGains = new PIDGains(2.5, 0.0, 0.0);
+    public static final TrapezoidProfile.Constraints kWristMotionConstraint =
+        new TrapezoidProfile.Constraints(1.0, 2.0);
+
+
+
+
+
+
+
+    public static final double kHomePosition = 0.0;
+    public static final double kShoulderHomePosition = 0.0;
+    public static final double kWristHomePosition = 0.0;
+    public static final double kScoringPosition = 0.0;
+    public static final double kIntakePosition = -1.17;
+
+
+
+  }
+
 }
