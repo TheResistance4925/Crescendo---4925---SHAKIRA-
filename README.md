@@ -25,6 +25,8 @@ for detailed system control or special stuff look below
       functionality.
 * LIMELIGHT for vision (NOT CURRENTLY FUNCTIONALY IMPLEMENTED)
     * The bot uses two limelights, a forward and backward 2 @ 3 respectivly
+    * The LL3 faces the intake side for ML based NOTE identifacation + targeting
+    * THE LL2 faces the BACK of the bot where we mainly shoot from and handles APRILTAGS
 * PathPlanner + PathPlanner LIB
     * We use pathplanner and their AUTOBUILDER functionality to generate
       high level motion profiles and complex autonomous routines 
