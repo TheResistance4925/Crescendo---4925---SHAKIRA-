@@ -7,7 +7,7 @@ second segment of the arm.
  // IF YOU ARE NOT OPERATING THE BOT IGNORE THIS BIT
 For any future referance the starting config is with the arm in a collapsed
 pose on the side of the Battery (wich is the BACK side of the robot for odemetry 
-purposes)
+purposes) -- NEO's should be facing away from DS -- or Speaker if were just driving it for pracitice
 
 //USE PATHPLANNER TO VEIW AUTOS + SHOW THEM TO OTHER TEAMS -- CHOOSER IS ON DASHBOARD
 
