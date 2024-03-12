@@ -1,44 +1,44 @@
 package frc.robot.subsystems;
 
-import edu.wpi.first.util.sendable.SendableBuilder;
-import edu.wpi.first.wpilibj.DoubleSolenoid;
-import edu.wpi.first.wpilibj.PneumaticsModuleType;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Command;
+import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.NeutralModeValue;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
+import edu.wpi.first.wpilibj.XboxController;
 
-public class ClimberSubsystem extends SubsystemBase {
-     
-   //Double Check forwardChannel andreverseChannel
-    DoubleSolenoid leftClaw = new DoubleSolenoid(18,PneumaticsModuleType.REVPH, 0, 1);
-    DoubleSolenoid rightClaw = new DoubleSolenoid(18,PneumaticsModuleType.REVPH, 14, 15);
+public class ClimberSubsystem extends SubsystemBase{
+ 
+    TalonFX climber = new TalonFX(40);
+    public XboxController driver;
+    public ClimberSubsystem(){
 
+    climber.setNeutralMode(NeutralModeValue.Brake);
+  
+    }
 
-//Raises Claw
-public Command raiseClaw() {
-    leftClaw.set(DoubleSolenoid.Value.kForward);
-    rightClaw.set(DoubleSolenoid.Value.kForward);
-    return runOnce(
-        () -> {
+public double moveClimber;
 
-        });
-    
-}
+//     public void ClimbCommand() {
 
-public Command lowerClaw() {
-    leftClaw.set(DoubleSolenoid.Value.kReverse);
-    rightClaw.set(DoubleSolenoid.Value.kReverse);
-    return runOnce(
-        () -> {
+//         climber.set(Constants.Climber.ClimberUp);
+   
+//     }
 
-        });
-    
-}
-/* 
-@Override
-public void initSendable(SendableBuilder builder) {
-    super .initSendable(builder);
-    builder.addBooleanProperty("extended", this::leftClaw.kForward, null);
-}
-*/
+//    public void ClimbDownCommand() {
+
+//         climber.set(Constants.Climber.ClimberDown);
+   
+//     }
+
+    public void stopMotors(){
+
+        climber.stopMotor();
+
+    }
+    @Override
+    public void periodic() {
+        moveClimber = XboxController.Axis.kRightY.value;
+        //climber.set(moveClimber);
+    }
 }

@@ -9,7 +9,7 @@ import frc.robot.RobotContainer;
 public class BeamBreak extends SubsystemBase {
 
   AnalogInput beam = new AnalogInput(0);
-  double beamVolts;
+  public double beamVolts;
   
   public BeamBreak() {
     
