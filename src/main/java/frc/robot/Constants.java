@@ -95,10 +95,10 @@ public final class Constants {
             public static final int driveMotorID = 1;
             public static final int angleMotorID = 3;
             public static final int canCoderID = 2;
-            public static final Rotation2d angleOffset = Rotation2d.fromDegrees(145.107421875);
+            public static final Rotation2d angleOffset = Rotation2d.fromDegrees(-34.27734375-180);
             public static final SwerveModuleConstants constants = 
                 new SwerveModuleConstants(driveMotorID, angleMotorID, canCoderID, angleOffset);
-        }
+        }//
 
         /* Front Right Module - Module 1 */
         public static final class Mod1 { //TODO: This must be tuned to specific robot
@@ -115,12 +115,12 @@ public final class Constants {
             public static final int driveMotorID = 4;
             public static final int angleMotorID = 6;
             public static final int canCoderID = 5;
-            public static final Rotation2d angleOffset = Rotation2d.fromDegrees(48.427734375);
+            public static final Rotation2d angleOffset = Rotation2d.fromDegrees(228.427734375);
             public static final SwerveModuleConstants constants = 
                 new SwerveModuleConstants(driveMotorID, angleMotorID, canCoderID, angleOffset);
         }
 
-        /* Back Right Module - Module 3 */
+        /* Back Right Module - Module 3 */ //DONE
         public static final class Mod3 { //TODO: This must be tuned to specific robot
             public static final int driveMotorID = 7;
             public static final int angleMotorID = 9;
@@ -149,69 +149,79 @@ public final class Constants {
                 kMaxAngularSpeedRadiansPerSecond, kMaxAngularSpeedRadiansPerSecondSquared);
     }
 
- public static final class Arm {
-    public static final int kArmCanId = 24;
-    public static final int kWristCanId = 26;
-
-    public static final boolean kArmInverted = true;
-    public static final int kCurrentLimit = 40;
-
-    // public static final double kSoftLimitReverse = -1.15;
-    // public static final double kSoftLimitForward = 0.0;
-
-    public static final double kArmGearRatio = (1.0 / 240);
-    // IMPORTANT CHANGE -- DIFFERENT RATIO FOR 2 JOINTS
-    public static final double kWristGearRatio = (1.0 / 60);
+    // Feedforward constants
+    public static final class Arm {
+        
+        public static final double SHOULDER_GEAR_RATIO = 240.0;
+        public static final double WRIST_GEAR_RATIO = 60.0;
+        public static final double NEO_STALL_TORQUE = 2.6; // Stall torque of NEO in Nm
+        public static final double NEO_FREE_SPEED = 5676.0 * 2 * Math.PI / 60; // Free speed of NEO in rad/s
+    
+        public static final double ENCODER_COUNTS_PER_REVOLUTION = 1;//8192; //For the dutycycle absolute encoders
 
 
 
-    public static final double kPositionFactor =
-        kArmGearRatio
-            * 2.0
-            * Math.PI; // multiply SM value by this number and get arm position in radians
-    public static final double kVelocityFactor = kArmGearRatio * 2.0 * Math.PI / 60.0;
-    public static final double kArmFreeSpeed = 5676.0 * kVelocityFactor;
-    public static final double kArmZeroCosineOffset =
-        1.342; // radians to add to converted arm position to get real-world arm position (starts at
-    // ~76.9deg angle)
-    public static final ArmFeedforward kArmFeedforward =
-        new ArmFeedforward(0.0, 3.0, 12.0 / kArmFreeSpeed, 0.0);
-    public static final PIDGains kArmPositionGains = new PIDGains(2.5, 0.0, 0.0);
-    public static final TrapezoidProfile.Constraints kArmMotionConstraint =
-        new TrapezoidProfile.Constraints(1.0, 2.0);
+        public static final double LENGTH_SEGMENT_1 = 0.83;  // Length of segment 1 in meters
+        public static final double LENGTH_SEGMENT_2 = 0.38;  // Length of segment 2 in meters
+        public static final double WEIGHT_END_SEGMENT_1 = 25;  // Weight at the end of segment 1 in kg
+        public static final double WEIGHT_END_SEGMENT_2 = 25;  // Weight at the end of segment 2 in kg
+        public static final double GRAVITY_CONSTANT = 9.81; // Gravity constant in m/s^2
 
+        // PID constants for shoulder joint
+        public static final class SHOULDER_PID {
+            public static final double kP = 0.1;
+            public static final double kI = 0.0;
+            public static final double kD = 0.0;
+            public static final double TOLERANCE = 1.0; // Tolerance for angle error in degrees
+        }
 
+        // PID constants for wrist joint
+        public static final class WRIST_PID {
+            public static final double kP = 0.1;
+            public static final double kI = 0.0;
+            public static final double kD = 0.0;
+            public static final double TOLERANCE = 1.0; // Tolerance for angle error in degrees
+        }
+    }
+ public static final class LEDs {
+        /* COLORS FOR BLINKIN CONTROL */
+        public static final double armActive = -0.99;
+        public static final double intakeActive = -0.89 ;
+        public static final double shooterActive = -0.87;
+        public static final double climberActive = 0.91;
+        public static final double redTeam = -0.85;
+        public static final double blueTeam = -0.83;
+        public static final double noTeam = 0.91;
+        public static final double Note = 0.57;
 
+      //  public static final double = n; //EXAMPLE LINE
 
+  }
 
-        public static final double kWristPositionFactor =
-        kArmGearRatio
-            * 2.0
-            * Math.PI; // multiply SM value by this number and get arm position in radians
-    public static final double kWristVelocityFactor = kWristGearRatio * 2.0 * Math.PI / 60.0;
-    public static final double kWristFreeSpeed = 5676.0 * kVelocityFactor;
-    public static final double kWristZeroCosineOffset =
-        1.342; // radians to add to converted arm position to get real-world arm position (starts at
-    // ~76.9deg angle)
-    public static final ArmFeedforward kWristFeedforward =
-        new ArmFeedforward(0.0, 3.0, 12.0 / kWristFreeSpeed, 0.0);
-    public static final PIDGains kWristPositionGains = new PIDGains(2.5, 0.0, 0.0);
-    public static final TrapezoidProfile.Constraints kWristMotionConstraint =
-        new TrapezoidProfile.Constraints(1.0, 2.0);
+ public static final class Toaster {
+        /* COLORS FOR BLINKIN CONTROL */
+        public static final double GroundIntake = -0.99;
+        public static final double GroundShooter = -0.89 ;
 
+        public static final double SubwooferShooterShooter = -0.87;
+        public static final double SubwooferIntakeShooter = -0.85;
 
+        public static final double ShooterPrime = -0.87;
+        public static final double IntakePrime = -0.85;
 
+        public static final double AMPShooter = -0.87;
+        public static final double AMPIntake = -0.85;
 
+      //  public static final double = n; //EXAMPLE LINE
 
+  }
 
-
-    public static final double kHomePosition = 0.0;
-    public static final double kShoulderHomePosition = 0.0;
-    public static final double kWristHomePosition = 0.0;
-    public static final double kScoringPosition = 0.0;
-    public static final double kIntakePosition = -1.17;
-
-
+ public static final class Climber {
+        /* COLORS FOR BLINKIN CONTROL */
+        public static final double ClimberUp = 1;
+        public static final double ClimberDown = -1;
+        public static final double ClimberRunDuration = 10;
+      //  public static final double = n; //EXAMPLE LINE
 
   }
 

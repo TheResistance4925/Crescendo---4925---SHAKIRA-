@@ -1,7 +1,6 @@
 package frc.robot.autos;
 
 import frc.robot.Constants;
-import frc.robot.subsystems.Swerve;
 
 import java.util.List;
 
@@ -16,8 +15,29 @@ import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.autos.*;
+import frc.robot.commands.*;
+import frc.robot.subsystems.*;
+import frc.robot.Constants;
+
+
 
 public class exampleAuto extends SequentialCommandGroup {
+
+// public final IntakeSubsystem m_intakeSubsystem = new IntakeSubsystem();
+// public final BeamBreak m_BeamBreak = new BeamBreak();
+// public final LEDSubsystem m_LedSubsystem = new LEDSubsystem();
+// public final ArmSubsystem m_ArmSubsystem = new ArmSubsystem();
+// public final ClimberSubsystem m_ClimberSubsystem = new ClimberSubsystem();
+
     public exampleAuto(Swerve s_Swerve){
         TrajectoryConfig config =
             new TrajectoryConfig(
@@ -31,10 +51,20 @@ public class exampleAuto extends SequentialCommandGroup {
                 // Start at the origin facing the +X direction
                 new Pose2d(0, 0, new Rotation2d(0)),
                 // Pass through these two interior waypoints, making an 's' curve path
-                List.of(new Translation2d(1, 1), new Translation2d(2, -1)),
+                List.of(new Translation2d(0, 1), new Translation2d(-2, 0)),
                 // End 3 meters straight ahead of where we started, facing forward
-                new Pose2d(3, 0, new Rotation2d(0)),
+                new Pose2d(0, 0, new Rotation2d(180)),
                 config);
+
+        // Trajectory exampleTrajectory2 =
+        //     TrajectoryGenerator.generateTrajectory(
+        //         // Start at the origin facing the +X direction
+        //         new Pose2d(0, 0, new Rotation2d(0)),
+        //         // Pass through these two interior waypoints, making an 's' curve path
+        //         List.of(new Translation2d(0, 1), new Translation2d(0, 1)),
+        //         // End 3 meters straight ahead of where we started, facing forward
+        //         new Pose2d(0, 2, new Rotation2d(0)),
+        //         config);
 
         var thetaController =
             new ProfiledPIDController(
@@ -54,8 +84,9 @@ public class exampleAuto extends SequentialCommandGroup {
 
 
         addCommands(
-            new InstantCommand(() -> s_Swerve.setPose(exampleTrajectory.getInitialPose())),
-            swerveControllerCommand
+new InstantCommand(() -> s_Swerve.setPose(exampleTrajectory.getInitialPose())),
+swerveControllerCommand
+
         );
     }
 }

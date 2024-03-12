@@ -12,43 +12,31 @@ import edu.wpi.first.hal.AllianceStationID;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.motorcontrol.Spark;
-
+import frc.robot.Constants;
+import frc.robot.subsystems.BeamBreak;
 public class LEDSubsystem extends SubsystemBase {
   /** Creates a new LEDSubsystem. */
 
   Spark m_blinkin = new Spark(9);
-
+  // public final BeamBreak m_BeamBreak = new BeamBreak();
   public LEDSubsystem() {
   
-    m_blinkin.set(0.71);
+       Optional<Alliance> ally = DriverStation.getAlliance();
+if (ally.isPresent()) {
+    if (ally.get() == Alliance.Red) {
+      m_blinkin.set(Constants.LEDs.redTeam);
+    }
+    if (ally.get() == Alliance.Blue) {
+      m_blinkin.set(Constants.LEDs.blueTeam);
+    }
+}
+else {
+  m_blinkin.set(Constants.LEDs.noTeam);
+} 
 
   }
 
-  
-  public void orange() {
-
-    m_blinkin.set(0.65);
-    
-  }
-
-  public void hotPink() {
-
-    m_blinkin.set(0.57);
-    
-  }
-
-  public void lime() {
-
-    m_blinkin.set(0.73);
-    
-  }
-
-  public void gold() {
-
-    m_blinkin.set(0.67);
-  }
-
-  public void custonColor(double blinkinValue) {
+  public void customColor(double blinkinValue) {
 
     m_blinkin.set(blinkinValue);
   }
@@ -56,26 +44,32 @@ public class LEDSubsystem extends SubsystemBase {
 
   public void baseColor() {
    
-    Optional<Alliance> ally = DriverStation.getAlliance();
+       Optional<Alliance> ally = DriverStation.getAlliance();
 if (ally.isPresent()) {
     if (ally.get() == Alliance.Red) {
-      m_blinkin.set(0.61);
+      m_blinkin.set(Constants.LEDs.redTeam);
     }
     if (ally.get() == Alliance.Blue) {
-      m_blinkin.set(0.85);
+      m_blinkin.set(Constants.LEDs.blueTeam);
     }
 }
 else {
-  m_blinkin.set(0.93);
+  m_blinkin.set(Constants.LEDs.noTeam);
+} 
+
 }
 
-  }
+public void noteCheck(){
 
-  @Override
+
+
+
+}
+
+
+@Override
   public void periodic() {
     // This method will be called once per scheduler run
-
-
-
+    noteCheck();
   }
 }
