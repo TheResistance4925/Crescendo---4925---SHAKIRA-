@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj.motorcontrol.Spark;
 import frc.robot.Constants;
 import frc.robot.subsystems.BeamBreak;
 public class LEDSubsystem extends SubsystemBase {
+  
   /** Creates a new LEDSubsystem. */
 
   Spark m_blinkin = new Spark(9);
@@ -70,6 +71,6 @@ public void noteCheck(){
 @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    noteCheck();
+   // noteCheck();
   }
 }

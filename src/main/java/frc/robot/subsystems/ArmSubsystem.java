@@ -126,21 +126,20 @@ public double shoulderPublicPosition;
 
   public void homeArm(){
 
-    poseShoulder(60);
-    new WaitCommand(3);
-    poseWrist( 5);
-    new WaitCommand(0.25);
-    poseShoulder(5);
+    // poseShoulder(60);
+    // new WaitCommand(3);
+  poseShoulder(5);
+    new WaitCommand(1);
+  
+        poseWrist( 5);
 
   }
 
   public void groundIntakePose(){
-
-    poseShoulder(50);
-    new WaitCommand(2);
-    poseWrist(-33);
-    new WaitCommand(1);
-    poseShoulder(21);
+    poseShoulder(60);
+    poseWrist(-40);
+    // new WaitCommand(3);
+    // poseShoulder(21);
   }
 
   @Override

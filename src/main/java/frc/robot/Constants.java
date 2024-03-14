@@ -188,7 +188,7 @@ public final class Constants {
         public static final double armActive = -0.99;
         public static final double intakeActive = -0.89 ;
         public static final double shooterActive = -0.87;
-        public static final double climberActive = 0.91;
+        public static final double climberActive = -0.93;
         public static final double redTeam = -0.85;
         public static final double blueTeam = -0.83;
         public static final double noTeam = 0.91;

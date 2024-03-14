@@ -1,11 +1,15 @@
 package frc.robot;
 
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
+import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.revrobotics.CANSparkMax;
 
 import edu.wpi.first.wpilibj.GenericHID;
 //import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -18,7 +22,7 @@ import frc.robot.autos.*;
 import frc.robot.commands.*;
 import frc.robot.subsystems.*;
 import frc.robot.Constants;
-
+import edu.wpi.first.wpilibj.AnalogInput;
 /**
 * This class is where the bulk of the robot should be declared. Since Command-based is a
 * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
@@ -28,6 +32,7 @@ import frc.robot.Constants;
 
 public class RobotContainer {
 
+  
 //subsystems
 public final IntakeSubsystem m_intakeSubsystem = new IntakeSubsystem();
 public final BeamBreak m_BeamBreak = new BeamBreak();
@@ -51,6 +56,9 @@ private final JoystickButton aprilAlign = new JoystickButton(driver, XboxControl
 
 /* Subsystems */
 private final Swerve s_Swerve = new Swerve();
+
+// Sendable Choose
+private final SendableChooser<Command> autoChooser;
 
 
  // simple proportional turning control with Limelight.
@@ -96,19 +104,9 @@ private final Swerve s_Swerve = new Swerve();
 
 public RobotContainer() {
 
-// Schedule command to move arm to zeroed position when robot is enabled
-// Command zeroArmCommand = new MoveArmToAngle(m_armSubsystem, m_armSubsystem2, 0.0, 0.0);
-// zeroArmCommand.schedule();
-
-
-
-// 
-
 configureButtonBindings();
 
 s_Swerve.setDefaultCommand(new TeleopSwerve(s_Swerve, () -> driver.getRawAxis(translationAxis), () -> driver.getRawAxis(strafeAxis), () -> -driver.getRawAxis(rotationAxis), () -> robotCentric.getAsBoolean()));
-
-
 
 // if(driver.getBButton()) {
 //     final var rot_limelight = limelight_aim_proportional();
@@ -117,11 +115,247 @@ s_Swerve.setDefaultCommand(new TeleopSwerve(s_Swerve, () -> driver.getRawAxis(tr
         // final var forward_limelight = limelight_range_proportional();
         // translationAxis = forward_limelight;
 // }
+    // Build an auto chooser. This will use Commands.none() as the default option.
+    autoChooser = AutoBuilder.buildAutoChooser();
 
+    // Another option that allows you to specify the default auto by its name
+    // autoChooser = AutoBuilder.buildAutoChooser("My Default Auto");
+
+    SmartDashboard.putData("Auto Chooser", autoChooser);
+
+//NAMED COMMANDS LIST - does what their names say.
+// NamedCommands.registerCommand("AmpScore", );
+// NamedCommands.registerCommand("SpeakerShort", );
+// NamedCommands.registerCommand("SpeakerLong", );
+// NamedCommands.registerCommand("GroundIntake", );
+// NamedCommands.registerCommand("HumanPlayerIntake", );
+// NamedCommands.registerCommand("ClimbUp", );
+// NamedCommands.registerCommand("ClimbDown", );
+// NamedCommands.registerCommand("HomeArm", );
+
+NamedCommands.registerCommand("AmpScore", new SequentialCommandGroup(
+// Change LED color to newBlinkinValue
+new InstantCommand(() -> m_LedSubsystem.customColor(Constants.LEDs.armActive), m_LedSubsystem),
+// Run the arm
+new InstantCommand(() -> {
+System.out.println("STOP INTAKE CHECK");
+m_intakeSubsystem.stopMotors();
+}, m_intakeSubsystem),
+new InstantCommand(() -> {
+System.out.println("Shoulder pose 100");
+m_ArmSubsystem.poseShoulder(20);
+}, m_ArmSubsystem),
+new InstantCommand(() -> {
+System.out.println("Wrist pose 0");
+m_ArmSubsystem.poseWrist(-10);
+}, m_ArmSubsystem),
+new WaitCommand(1.5),
+new InstantCommand(() -> m_LedSubsystem.customColor(Constants.LEDs.shooterActive), m_LedSubsystem),
+new InstantCommand(() -> {
+System.out.println("Intake button activated");
+m_intakeSubsystem.runIntake(-0.9, -0.9, 0.5);
+}, m_intakeSubsystem),
+new InstantCommand(() -> {
+System.out.println("ARM ZERO");
+m_ArmSubsystem.homeArm();
+}, m_ArmSubsystem),
+new InstantCommand(() -> {
+System.out.println("STOP INTAKE CHECK");
+m_intakeSubsystem.stopMotors();
+}, m_intakeSubsystem),
+// Revert LED color back to initialBlinkinValue
+new InstantCommand(() -> m_LedSubsystem.baseColor(), m_LedSubsystem)
+));
+NamedCommands.registerCommand("SpeakerShort", new SequentialCommandGroup(
+// Change LED color to newBlinkinValue
+new InstantCommand(() -> m_LedSubsystem.customColor(Constants.LEDs.armActive), m_LedSubsystem),
+// Run the arm
+new InstantCommand(() -> {
+System.out.println("STOP INTAKE CHECK");
+m_intakeSubsystem.stopMotors();
+}, m_intakeSubsystem),
+new InstantCommand(() -> {
+System.out.println("Intake button activated");
+m_intakeSubsystem.runIntake( 0.25, 0, 0);
+}, m_intakeSubsystem),
+new InstantCommand(() -> {
+System.out.println("Shoulder pose 100");
+m_ArmSubsystem.poseShoulder(65);
+}, m_ArmSubsystem),
+new WaitCommand(0.75),
+new InstantCommand(() -> {
+System.out.println("Wrist pose 0");
+m_ArmSubsystem.poseWrist(-38);
+}, m_ArmSubsystem),
+new InstantCommand(() -> m_LedSubsystem.customColor(Constants.LEDs.shooterActive), m_LedSubsystem),
+// Run the Shooter
+new WaitCommand(3),
+new InstantCommand(() -> {
+System.out.println("Shooter button pressed");
+m_intakeSubsystem.shooterSequence(0.95, 0.25, 0.45, 0.1, -0.8, 0.1, 1, 0.6);
+}, m_intakeSubsystem),
+new InstantCommand(() -> {
+System.out.println("ARM ZERO");
+m_ArmSubsystem.homeArm();
+}, m_ArmSubsystem),
+// Revert LED color back to initialBlinkinValue
+new InstantCommand(() -> m_LedSubsystem.baseColor(), m_LedSubsystem)
+));
+NamedCommands.registerCommand("SpeakerLong", new SequentialCommandGroup(
+// Change LED color to newBlinkinValue
+new InstantCommand(() -> m_LedSubsystem.customColor(Constants.LEDs.armActive), m_LedSubsystem),
+// Run the arm
+new InstantCommand(() -> {
+System.out.println("STOP INTAKE CHECK");
+m_intakeSubsystem.stopMotors();
+}, m_intakeSubsystem),
+new InstantCommand(() -> {
+System.out.println("Intake button activated");
+m_intakeSubsystem.runIntake( 0.25, 0, 0);
+}, m_intakeSubsystem),
+new InstantCommand(() -> {
+System.out.println("Shoulder pose 100");
+m_ArmSubsystem.poseShoulder(77.5);
+}, m_ArmSubsystem),
+new WaitCommand(0.75),
+new InstantCommand(() -> {
+System.out.println("Wrist pose 0");
+m_ArmSubsystem.poseWrist(-38);
+}, m_ArmSubsystem),
+new InstantCommand(() -> m_LedSubsystem.customColor(Constants.LEDs.shooterActive), m_LedSubsystem),
+// Run the Shooter
+new WaitCommand(3),
+new InstantCommand(() -> {
+System.out.println("Shooter button pressed");
+m_intakeSubsystem.shooterSequence(0.95, 0.25, 0.45, 0.1, -0.8, 0.1, 1.5, 0.6);
+}, m_intakeSubsystem),
+new InstantCommand(() -> {
+System.out.println("ARM ZERO");
+m_ArmSubsystem.homeArm();
+}, m_ArmSubsystem),
+// Revert LED color back to initialBlinkinValue
+new InstantCommand(() -> m_LedSubsystem.baseColor(), m_LedSubsystem)
+));
+NamedCommands.registerCommand("GroundIntake", new SequentialCommandGroup(
+// Change LED color to newBlinkinValue
+new InstantCommand(() -> m_LedSubsystem.customColor(Constants.LEDs.armActive), m_LedSubsystem),
+// Run the arm
+// new InstantCommand(() -> {
+// System.out.println("GroundIntake");
+// m_ArmSubsystem.poseShoulder(80);
+// }, m_ArmSubsystem),
+// new WaitCommand(0.75),
+new InstantCommand(() -> {
+System.out.println("GroundIntake");
+m_ArmSubsystem.groundIntakePose();
+}, m_ArmSubsystem),
+new WaitCommand(3),
+new InstantCommand(() -> {
+System.out.println("Wrist pose 0");
+m_ArmSubsystem.poseShoulder(21);
+}, m_ArmSubsystem),
+new WaitCommand(0.5),
+new InstantCommand(() -> {
+System.out.println("Wrist pose 0");
+m_ArmSubsystem.poseWrist(-33);
+}, m_ArmSubsystem),
+// Run the Intake
+new InstantCommand(() -> m_LedSubsystem.customColor(Constants.LEDs.intakeActive), m_LedSubsystem),
+new WaitCommand(1),
+new InstantCommand(() -> {
+System.out.println("Intake button activated");
+m_intakeSubsystem.runIntake( 0.9, 0.2, 0);
+}, m_intakeSubsystem),
+// Revert LED color back to initialBlinkinValue
+new InstantCommand(() -> m_LedSubsystem.baseColor(), m_LedSubsystem)
+));
+NamedCommands.registerCommand("HumanPlayerIntake", new SequentialCommandGroup(
+// Change LED color to newBlinkinValue
+new InstantCommand(() -> m_LedSubsystem.customColor(Constants.LEDs.intakeActive), m_LedSubsystem),
+// Run the intake sequence
+new InstantCommand(() -> {
+System.out.println("STOP INTAKE CHECK");
+m_intakeSubsystem.stopMotors();
+}, m_intakeSubsystem),
+new InstantCommand(() -> m_LedSubsystem.customColor(Constants.LEDs.intakeActive), m_LedSubsystem),
+new InstantCommand(() -> {
+System.out.println("Intake button activated");
+m_intakeSubsystem.runIntake(0.6, 0.2, 0);
+}, m_intakeSubsystem),
+// Revert LED color back to initialBlinkinValue
+new InstantCommand(() -> m_LedSubsystem.baseColor(), m_LedSubsystem)
+));
+NamedCommands.registerCommand("ClimbUp", new SequentialCommandGroup(    
+// Change LED color to newBlinkinValue
+new InstantCommand(() -> m_LedSubsystem.customColor(Constants.LEDs.climberActive), m_LedSubsystem),
+// Run the cimber
+new InstantCommand(() -> {
+System.out.println("Climber Stuff");
+m_ClimberSubsystem.ClimbCommand();
+}, m_ClimberSubsystem),
+
+new WaitCommand(4.5/2),
+
+new InstantCommand(() -> {
+System.out.println("Climber Stuff");
+m_ClimberSubsystem.stopMotors();
+}, m_ClimberSubsystem),
+
+new InstantCommand(() -> m_LedSubsystem.baseColor(), m_LedSubsystem)
+));
+NamedCommands.registerCommand("ClimbDown", new SequentialCommandGroup(    
+// Change LED color to newBlinkinValue
+new InstantCommand(() -> m_LedSubsystem.customColor(Constants.LEDs.climberActive), m_LedSubsystem),
+// Run the cimber
+new InstantCommand(() -> {
+System.out.println("Climber Stuff");
+m_ClimberSubsystem.RetractCommand();
+}, m_ClimberSubsystem),
+
+new WaitCommand(4.5/2),
+
+new InstantCommand(() -> {
+System.out.println("Climber Stuff");
+m_ClimberSubsystem.stopMotors();
+}, m_ClimberSubsystem),
+
+new InstantCommand(() -> m_LedSubsystem.baseColor(), m_LedSubsystem)
+));
+NamedCommands.registerCommand("HomeArm", new SequentialCommandGroup(
+// Change LED color to newBlinkinValue
+new InstantCommand(() -> m_LedSubsystem.customColor(Constants.LEDs.armActive), m_LedSubsystem),
+// Run the arm
+new InstantCommand(() -> {
+System.out.println("STOP INTAKE CHECK");
+m_intakeSubsystem.stopMotors();
+}, m_intakeSubsystem),
+new InstantCommand(() -> {
+System.out.println("Wrist pose 0");
+m_ArmSubsystem.poseShoulder(60);
+}, m_ArmSubsystem),
+new InstantCommand(() -> {
+System.out.println("Wrist pose 0");
+m_ArmSubsystem.poseWrist(-44);
+}, m_ArmSubsystem),
+new WaitCommand(1),
+new InstantCommand(() -> {
+System.out.println("ARM ZERO");
+m_ArmSubsystem.homeArm();
+}, m_ArmSubsystem),
+new WaitCommand(1),
+new InstantCommand(() -> {
+System.out.println("Shooter button pressed");
+m_intakeSubsystem.shooterSequence(0.95, 0.25, 0.1, 0, 0, 0, 0, 0);
+}, m_intakeSubsystem),
+new WaitCommand(1),
+new InstantCommand(() -> {
+System.out.println("STOP INTAKE CHECK");
+m_intakeSubsystem.stopMotors();
+}, m_intakeSubsystem),
+// Revert LED color back to initialBlinkinValue
+new InstantCommand(() -> m_LedSubsystem.baseColor(), m_LedSubsystem)
+));
 }
-
-
-// Configure shoulder control using Xbox controller input
 
 
 
@@ -132,18 +366,12 @@ s_Swerve.setDefaultCommand(new TeleopSwerve(s_Swerve, () -> driver.getRawAxis(tr
 * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
 */
 
-private void scheduleCommand(Command command) {
-// Schedule command to run periodically
-command.schedule();
-}
-
 private void configureButtonBindings() {
-
-// m_BeamBreak.hasNote.onTrue(m_LedSubsystem.customColor(Constants.LEDs.Note));
+    
+new Trigger(m_BeamBreak::isBeamBroken).whileTrue(
+new InstantCommand(() -> m_LedSubsystem.baseColor(), m_LedSubsystem));
     
 //zeroGyro.onTrue(new InstantCommand(() -> s_Swerve.zeroGyro()));     
-
-
 
 Trigger shooterBasicScore = new JoystickButton(driver2, XboxController.Button.kLeftBumper.value);
 shooterBasicScore.onTrue(new SequentialCommandGroup(
@@ -174,12 +402,10 @@ new InstantCommand(() -> {
 System.out.println("Shooter button pressed");
 m_intakeSubsystem.shooterSequence(0.95, 0.25, 0.45, 0.1, -0.8, 0.1, 1, 0.6);
 }, m_intakeSubsystem),
-
 new InstantCommand(() -> {
 System.out.println("ARM ZERO");
 m_ArmSubsystem.homeArm();
 }, m_ArmSubsystem),
-
 // Revert LED color back to initialBlinkinValue
 new InstantCommand(() -> m_LedSubsystem.baseColor(), m_LedSubsystem)
 ));
@@ -213,12 +439,10 @@ new InstantCommand(() -> {
 System.out.println("Shooter button pressed");
 m_intakeSubsystem.shooterSequence(0.95, 0.25, 0.45, 0.1, -0.8, 0.1, 1.5, 0.6);
 }, m_intakeSubsystem),
-
 new InstantCommand(() -> {
 System.out.println("ARM ZERO");
 m_ArmSubsystem.homeArm();
 }, m_ArmSubsystem),
-
 // Revert LED color back to initialBlinkinValue
 new InstantCommand(() -> m_LedSubsystem.baseColor(), m_LedSubsystem)
 ));
@@ -289,26 +513,29 @@ new InstantCommand(() -> {
 System.out.println("STOP INTAKE CHECK");
 m_intakeSubsystem.stopMotors();
 }, m_intakeSubsystem),
-
+new InstantCommand(() -> {
+System.out.println("Wrist pose 0");
+m_ArmSubsystem.poseShoulder(60);
+}, m_ArmSubsystem),
+new InstantCommand(() -> {
+System.out.println("Wrist pose 0");
+m_ArmSubsystem.poseWrist(-44);
+}, m_ArmSubsystem),
+new WaitCommand(1),
 new InstantCommand(() -> {
 System.out.println("ARM ZERO");
 m_ArmSubsystem.homeArm();
 }, m_ArmSubsystem),
-
 new WaitCommand(1),
-
 new InstantCommand(() -> {
 System.out.println("Shooter button pressed");
 m_intakeSubsystem.shooterSequence(0.95, 0.25, 0.1, 0, 0, 0, 0, 0);
 }, m_intakeSubsystem),
-
 new WaitCommand(1),
-
 new InstantCommand(() -> {
 System.out.println("STOP INTAKE CHECK");
 m_intakeSubsystem.stopMotors();
 }, m_intakeSubsystem),
-
 // Revert LED color back to initialBlinkinValue
 new InstantCommand(() -> m_LedSubsystem.baseColor(), m_LedSubsystem)
 ));
@@ -320,15 +547,24 @@ groundIntakePose.onTrue(new SequentialCommandGroup(
 // Change LED color to newBlinkinValue
 new InstantCommand(() -> m_LedSubsystem.customColor(Constants.LEDs.armActive), m_LedSubsystem),
 // Run the arm
-
-new InstantCommand(() -> {
-System.out.println("GroundIntake");
-m_ArmSubsystem.poseShoulder(80);
-}, m_ArmSubsystem),
-new WaitCommand(0.75),
+// new InstantCommand(() -> {
+// System.out.println("GroundIntake");
+// m_ArmSubsystem.poseShoulder(80);
+// }, m_ArmSubsystem),
+// new WaitCommand(0.75),
 new InstantCommand(() -> {
 System.out.println("GroundIntake");
 m_ArmSubsystem.groundIntakePose();
+}, m_ArmSubsystem),
+new WaitCommand(3),
+new InstantCommand(() -> {
+System.out.println("Wrist pose 0");
+m_ArmSubsystem.poseShoulder(21);
+}, m_ArmSubsystem),
+new WaitCommand(0.5),
+new InstantCommand(() -> {
+System.out.println("Wrist pose 0");
+m_ArmSubsystem.poseWrist(-33);
 }, m_ArmSubsystem),
 // Run the Intake
 new InstantCommand(() -> m_LedSubsystem.customColor(Constants.LEDs.intakeActive), m_LedSubsystem),
@@ -343,45 +579,45 @@ new InstantCommand(() -> m_LedSubsystem.baseColor(), m_LedSubsystem)
 
 
 
-// Trigger climber = new JoystickButton(driver2, XboxController.Button.kB.value);
-// climber.onTrue(new SequentialCommandGroup(    
-// // Change LED color to newBlinkinValue
-// new InstantCommand(() -> m_LedSubsystem.customColor(Constants.LEDs.climberActive), m_LedSubsystem),
-// // Run the cimber
-// new InstantCommand(() -> {
-// System.out.println("Climber Stuff");
-// m_ClimberSubsystem.ClimbCommand();
-// }, m_ClimberSubsystem),
+Trigger climber = new JoystickButton(driver2, XboxController.Button.kB.value);
+climber.onTrue(new SequentialCommandGroup(    
+// Change LED color to newBlinkinValue
+new InstantCommand(() -> m_LedSubsystem.customColor(Constants.LEDs.climberActive), m_LedSubsystem),
+// Run the cimber
+new InstantCommand(() -> {
+System.out.println("Climber Stuff");
+m_ClimberSubsystem.ClimbCommand();
+}, m_ClimberSubsystem),
 
-// new WaitCommand(2),
+new WaitCommand(4.5/2),
 
-// new InstantCommand(() -> {
-// System.out.println("Climber Stuff");
-// m_ClimberSubsystem.stopMotors();
-// }, m_ClimberSubsystem),
+new InstantCommand(() -> {
+System.out.println("Climber Stuff");
+m_ClimberSubsystem.stopMotors();
+}, m_ClimberSubsystem),
 
-// new InstantCommand(() -> m_LedSubsystem.baseColor(), m_LedSubsystem)
-// ));
+new InstantCommand(() -> m_LedSubsystem.baseColor(), m_LedSubsystem)
+));
 
-// Trigger climber2 = new JoystickButton(driver2, XboxController.Button.kB.value);
-// climber2.onTrue(new SequentialCommandGroup(    
-// // Change LED color to newBlinkinValue
-// new InstantCommand(() -> m_LedSubsystem.customColor(Constants.LEDs.climberActive), m_LedSubsystem),
-// // Run the cimber
-// new InstantCommand(() -> {
-// System.out.println("Climber Stuff");
-// m_ClimberSubsystem.ClimbDownCommand();
-// }, m_ClimberSubsystem),
+Trigger climber2 = new JoystickButton(driver2, XboxController.Button.kRightStick.value);
+climber2.onTrue(new SequentialCommandGroup(    
+// Change LED color to newBlinkinValue
+new InstantCommand(() -> m_LedSubsystem.customColor(Constants.LEDs.climberActive), m_LedSubsystem),
+// Run the cimber
+new InstantCommand(() -> {
+System.out.println("Climber Stuff");
+m_ClimberSubsystem.RetractCommand();
+}, m_ClimberSubsystem),
 
-// new WaitCommand(2),
+new WaitCommand(4.5/2),
 
-// new InstantCommand(() -> {
-// System.out.println("Climber Stuff");
-// m_ClimberSubsystem.stopMotors();
-// }, m_ClimberSubsystem),
+new InstantCommand(() -> {
+System.out.println("Climber Stuff");
+m_ClimberSubsystem.stopMotors();
+}, m_ClimberSubsystem),
 
-// new InstantCommand(() -> m_LedSubsystem.baseColor(), m_LedSubsystem)
-// ));
+new InstantCommand(() -> m_LedSubsystem.baseColor(), m_LedSubsystem)
+));
 
 }
 
@@ -392,6 +628,8 @@ new InstantCommand(() -> m_LedSubsystem.baseColor(), m_LedSubsystem)
 */
 public Command getAutonomousCommand() {
 // An ExampleCommand will run in autonomous
-return new exampleAuto(s_Swerve);
+// return new shootLeave(m_ArmSubsystem, m_intakeSubsystem, m_LedSubsystem);
+return autoChooser.getSelected();
 }
+
 }
