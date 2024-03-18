@@ -4,13 +4,11 @@ import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
 
-import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
-import frc.lib.PIDGains;
 import frc.lib.util.COTSTalonFXSwerveConstants;
 import frc.lib.util.SwerveModuleConstants;
 
@@ -182,6 +180,38 @@ public final class Constants {
             public static final double kD = 0.0;
             public static final double TOLERANCE = 1.0; // Tolerance for angle error in degrees
         }
+
+        public static final class POSITIONS {
+            // SCORES from the AMP w/ a small (~6in) Backup
+            public static final double AmpShoulder = 20;
+            public static final double AmpWrist = -7.5-5;
+            // SCORES from directly below the SPEAKER (any side)
+            public static final double ShortSpeakerShotShoulder = 75;
+            public static final double ShortSpeakerShotWrist = -33-10;
+            // SCORES FROM 70 from SPEAKER
+            public static final double LongSpeakerShotShoulder = 77.5;
+            public static final double LongSpeakerShotWrist = -33-10;
+            //PRE sections in GroundIntakePose Method, POST in RoboContainer
+            public static final double GroundIntakePREShoulder = 70;
+            public static final double GroundIntakePREWrist = -44;
+
+            public static final double GroundIntakePOSTShoulder = 23;
+            public static final double GroundIntakePOSTWrist = -25-10;
+
+            public static final double HomeShoulder = 5;
+            public static final double HomeWrist = 20;
+
+            public static final double ClimbShoulder = 140;
+            public static final double ClimbWrist = -30-10;
+            // public static final double AmpShoulder = 0;
+            // public static final double AmpShoulder = 0;
+            // public static final double AmpShoulder = 0;
+            // public static final double AmpShoulder = 0;
+            // public static final double AmpShoulder = 0;
+            // public static final double AmpShoulder = 0;
+
+        };
+
     }
  public static final class LEDs {
         /* COLORS FOR BLINKIN CONTROL */
@@ -199,28 +229,28 @@ public final class Constants {
   }
 
  public static final class Toaster {
-        /* COLORS FOR BLINKIN CONTROL */
-        public static final double GroundIntake = -0.99;
-        public static final double GroundShooter = -0.89 ;
 
-        public static final double SubwooferShooterShooter = -0.87;
-        public static final double SubwooferIntakeShooter = -0.85;
+        //VALUES FOR FOR CONTROLING THE TOASTER ( INTAKE/SHOOTER )
+            public static final double HomeIntake = -0.95;
+            public static final double HomeShooter = -0.25;
+            public static final double HomeDuration = 0.1;
 
-        public static final double ShooterPrime = -0.87;
-        public static final double IntakePrime = -0.85;
+            public static final double GroundShooterSpeed = 0.2;
+            public static final double GroundIntakeSpeed  = -0.9;
+           
 
-        public static final double AMPShooter = -0.87;
-        public static final double AMPIntake = -0.85;
+            // public static final double AmpShoulder = 0;
+            // public static final double AmpShoulder = 0;
+            // public static final double AmpShoulder = 0;
 
-      //  public static final double = n; //EXAMPLE LINE
 
   }
 
  public static final class Climber {
-        /* COLORS FOR BLINKIN CONTROL */
+
         public static final double ClimberUp = 1;
         public static final double ClimberDown = -1;
-        public static final double ClimberRunDuration = 10;
+        public static final double ClimberRunDuration = 4.5;
       //  public static final double = n; //EXAMPLE LINE
 
   }

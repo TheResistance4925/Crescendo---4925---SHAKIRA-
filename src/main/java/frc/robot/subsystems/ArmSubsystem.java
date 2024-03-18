@@ -8,6 +8,7 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
+import frc.robot.Constants;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
@@ -125,19 +126,17 @@ public double shoulderPublicPosition;
   }
 
   public void homeArm(){
+     
+  poseWrist( Constants.Arm.POSITIONS.HomeWrist);
+     new WaitCommand(1);
+  poseShoulder(Constants.Arm.POSITIONS.HomeShoulder);
 
-    // poseShoulder(60);
-    // new WaitCommand(3);
-  poseShoulder(5);
-    new WaitCommand(1);
-  
-        poseWrist( 5);
 
   }
 
-  public void groundIntakePose(){
-    poseShoulder(60);
-    poseWrist(-40);
+  public void groundIntakePrePose(){
+    poseShoulder(Constants.Arm.POSITIONS.GroundIntakePREShoulder);
+    poseWrist(Constants.Arm.POSITIONS.GroundIntakePREWrist);
     // new WaitCommand(3);
     // poseShoulder(21);
   }
