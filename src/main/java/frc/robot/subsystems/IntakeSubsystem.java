@@ -7,6 +7,7 @@ package frc.robot.subsystems;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import com.revrobotics.CANSparkMax;
 import edu.wpi.first.wpilibj.Timer;
+import frc.robot.Constants;
 public class IntakeSubsystem extends SubsystemBase {
     
 
@@ -50,8 +51,69 @@ public class IntakeSubsystem extends SubsystemBase {
     Timer.delay(runTime);
   }
  
-public void shooterSequence
-(double primeIntakeSpeed, double primeShooterSpeed, double primeTime, 
+  // System.out.println("Shooter button pressed");
+  // m_intakeSubsystem.shooterSequence(, , , , , 0.1, 1, 0.6);
+  // }, m_intakeSubsystem),
+
+public void shortShot() {
+
+    System.out.print("FIRE IN THE HOLEEEE!");
+
+    //Positions the note in the intake
+    shooter1.set(-0.25);
+    shooter2.set(-0.25);
+    intake1.set(-0.95);
+    //Time that this process takes
+    Timer.delay(0.45);  
+    //Stops the motors to hold the notes pose
+    shooter1.stopMotor();
+    shooter2.stopMotor();
+    intake1.stopMotor();
+    //A breif push to insure the note position
+    intake1.set(-0.1);
+    Timer.delay(0.1);
+    intake1.stopMotor();
+    Timer.delay(0.25);
+    //Revs the shooters to full speed
+    shooter1.set(0.8);
+    shooter2.set(0.8);
+    Timer.delay(1.5);
+    intake1.set(-1);
+    Timer.delay(0.6);
+    stopMotors();
+
+  }
+
+public void longShot() {
+
+    System.out.print("FIRE IN THE HOLEEEE!");
+
+    //Positions the note in the intake
+    shooter1.set(-0.25);
+    shooter2.set(-0.25);
+    intake1.set(-0.95);
+    //Time that this process takes
+    Timer.delay(0.45);  
+    //Stops the motors to hold the notes pose
+    shooter1.stopMotor();
+    shooter2.stopMotor();
+    intake1.stopMotor();
+    //A breif push to insure the note position
+    intake1.set(-0.1);
+    Timer.delay(0.1);
+    intake1.stopMotor();
+    Timer.delay(0.25);
+    //Revs the shooters to full speed
+    shooter1.set(0.8);
+    shooter2.set(0.8);
+    Timer.delay(1.5);
+    intake1.set(-1);
+    Timer.delay(0.6);
+    stopMotors();
+
+  }
+
+public void shooterSequence(double primeIntakeSpeed, double primeShooterSpeed, double primeTime, 
 double revIntakeSpeed, double revShooterSpeed, 
 double revIntakeTime, double revShooterTime, 
 double fireTime) {
@@ -83,7 +145,31 @@ double fireTime) {
 
   }
 
+public void homeToaster() {
 
+    System.out.print("FIRE IN THE HOLEEEE!");
+
+    //Positions the note in the intake
+    shooter1.set(Constants.Toaster.HomeShooter);
+    shooter2.set(Constants.Toaster.HomeShooter);
+    intake1.set(Constants.Toaster.HomeIntake);
+    //Time that this process takes
+    Timer.delay(Constants.Toaster.HomeDuration);  
+    //Stops the motors to hold the notes pose
+    shooter1.stopMotor();
+    shooter2.stopMotor();
+    intake1.stopMotor();
+
+  }
+
+  public void groundToaster() {
+   
+    System.out.print("ACTIVE INTAKE");
+    shooter1.set(Constants.Toaster.GroundShooterSpeed);
+    shooter2.set(Constants.Toaster.GroundShooterSpeed);
+    intake1.set(Constants.Toaster.GroundIntakeSpeed);
+ 
+  }
 
     // Method to stop all motors
     public void stopMotors() {

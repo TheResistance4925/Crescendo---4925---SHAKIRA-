@@ -1,0 +1,102 @@
+{
+  "version": 1.0,
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 1.3931728606644662,
+        "y": 5.51147962741838
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 1.3931728606644662,
+        "y": 5.526065617789655
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 1.8378347867806848,
+        "y": 4.082769223739506
+      },
+      "prevControl": {
+        "x": 1.8195864765218925,
+        "y": 4.087678727481302
+      },
+      "nextControl": {
+        "x": 1.8652984417648328,
+        "y": 4.075380434586106
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 2.3191724690327686,
+        "y": 4.082769223739506
+      },
+      "prevControl": {
+        "x": 2.292816219491529,
+        "y": 4.0462004710129085
+      },
+      "nextControl": {
+        "x": 2.345528718574008,
+        "y": 4.119337976466103
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 1.3863435819357188,
+        "y": 5.518308906147127
+      },
+      "prevControl": {
+        "x": 1.3863435819357188,
+        "y": 5.459964944662024
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": null
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "eventMarkers": [
+    {
+      "name": "New Event Marker",
+      "waypointRelativePos": 2.1999999999999997,
+      "command": {
+        "type": "parallel",
+        "data": {
+          "commands": [
+            {
+              "type": "named",
+              "data": {
+                "name": "primeArm"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "globalConstraints": {
+    "maxVelocity": 3.0,
+    "maxAcceleration": 3.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 0,
+    "rotateFast": false
+  },
+  "reversed": false,
+  "folder": null,
+  "previewStartingState": {
+    "rotation": 0,
+    "velocity": 0
+  },
+  "useDefaultConstraints": true
+}
